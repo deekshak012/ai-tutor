@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run ruff
+        run: |
+          if [ -f backend/pyproject.toml ]; then
+            pip install ruff
+            ruff check backend
+            ruff format --check backend
+          else
+            echo "No backend yet — skipping lint."
+          fi
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run pytest
+        run: |
+          if [ -f backend/pyproject.toml ]; then
+            pip install -e "backend[dev]"
+            pytest backend
+          else
+            echo "No backend yet — skipping tests."
+          fi
+
+  docs-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify docs were updated alongside app code changes
+        run: |
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          if [ -z "$BASE_SHA" ]; then
+            BASE_SHA=$(git rev-parse HEAD~1)
+          fi
+          CHANGED=$(git diff --name-only "$BASE_SHA"...HEAD)
+          echo "Changed files:"
+          echo "$CHANGED"
+          APP_CHANGES=$(echo "$CHANGED" | grep -Ev '^(docs/|\.claude/|\.github/|learning-log\.md|README)' || true)
+          DOC_CHANGES=$(echo "$CHANGED" | grep -E '^docs/' || true)
+          if [ -n "$APP_CHANGES" ] && [ -z "$DOC_CHANGES" ]; then
+            echo "App code changed without a matching docs/ update:"
+            echo "$APP_CHANGES"
+            exit 1
+          fi
+
+  eval:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Placeholder eval job
+        run: echo "Eval runner not implemented yet — placeholder for v0.0."

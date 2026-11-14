@@ -1,0 +1,1 @@
+Standalone explainers for concepts used in this project (e.g. retrieval, knowledge tracing, embeddings), created on demand by the `doc-writer` subagent and linked from feature docs. Start from `docs/templates/concept-doc-template.md`.

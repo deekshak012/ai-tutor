@@ -1,0 +1,27 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Edit(*.py)|Write(*.py)",
+            "command": "ruff",
+            "args": ["format", "${tool_input.file_path}"],
+            "timeout": 30,
+            "onFailure": "continue"
+          },
+          {
+            "type": "command",
+            "if": "Edit(*.py)|Write(*.py)",
+            "command": "ruff",
+            "args": ["check", "${tool_input.file_path}"],
+            "timeout": 30,
+            "onFailure": "continue"
+          }
+        ]
+      }
+    ]
+  }
+}
