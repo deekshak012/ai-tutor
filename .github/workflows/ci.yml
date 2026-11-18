@@ -41,9 +41,20 @@ jobs:
           fetch-depth: 0
       - name: Verify docs were updated alongside app code changes
         run: |
+          # Resolve a base to diff against. On PRs use the merge base; on a
+          # push use the commit before the push; otherwise fall back to the
+          # parent. Skip the check when no valid base exists (e.g. the first
+          # commit on a new branch), since there is nothing to compare to.
           BASE_SHA="${{ github.event.pull_request.base.sha }}"
           if [ -z "$BASE_SHA" ]; then
-            BASE_SHA=$(git rev-parse HEAD~1)
+            BASE_SHA="${{ github.event.before }}"
+          fi
+          if [ -z "$BASE_SHA" ] || [ "$BASE_SHA" = "0000000000000000000000000000000000000000" ] || ! git cat-file -e "$BASE_SHA^{commit}" 2>/dev/null; then
+            BASE_SHA=$(git rev-parse --verify HEAD~1 2>/dev/null || true)
+          fi
+          if [ -z "$BASE_SHA" ]; then
+            echo "No base commit to compare against (first commit on this ref) — skipping docs-check."
+            exit 0
           fi
           CHANGED=$(git diff --name-only "$BASE_SHA"...HEAD)
           echo "Changed files:"
