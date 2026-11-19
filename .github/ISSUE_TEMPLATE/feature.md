@@ -1,40 +1,39 @@
 ---
-name: Feature
-about: A feature issue for the ai-tutor backlog (fields match the backlog-writer skill)
-title: "[ID] Short title"
-labels: type:feature
+name: Curriculum module
+about: A read-to-understand explainer module for ai-tutor (no code is written)
+title: "M<NN> — How <component> works (<ID>)"
+labels: type:feature, owner:agent
 ---
 
-## ID
-<!-- Epic prefix + number, e.g. RET-02 -->
+## Module
+<!-- M<NN> · Part N -->
 
-## Description
+## Component
+<!-- `<ID>` — <name> of the component being explained -->
 
-## Acceptance criteria
+## What you'll understand
+<!-- One or two sentences on what the reader will be able to explain afterward -->
 
-- [ ]
-- [ ]
+## The explainer must cover
+- [ ] What it is & why it exists
+- [ ] How it works, step by step — with a Mermaid data-flow or sequence diagram
+- [ ] Where the data lives (tables/fields/stores, or "none")
+- [ ] Key concepts (linked to `docs/concepts/`)
+- [ ] Design decisions & rejected alternatives (linked ADRs)
+- [ ] A worked example
+- [ ] A "check your understanding" section (3–5 questions + a thought experiment)
 
-## Dependencies
+## Depth
+<!-- deep dive | light -->
 
-## Epic
+## Deliverable
+`docs/curriculum/<NN>-<slug>.md`, authored by `doc-writer` (**owner:agent**). No code.
 
-## Release milestone
+## Reading order
+<!-- Prereqs: M.. · Next: M.. -->
 
-## Owner
-<!-- owner:deeksha or owner:agent, with a one-line reason -->
-
-## Concepts learned
-
-## Required eval
-
-## Size
-<!-- S / M / L -->
-
-## Definition of Done (every story)
-<!-- Standing checklist — the same for every feature; do not delete. -->
-
-- [ ] **Learning doc** written by `doc-writer` at `docs/features/<ID>-<slug>.md` so Deeksha can understand what was built: what & why, how it works (with file/function refs), a Mermaid data-flow diagram, data stored, concepts used (linked to concept docs), design decisions, how to run & test, and a **"check your understanding"** section
-- [ ] `docs/data/guide.md` and/or `docs/architecture/overview.md` updated if data or architecture changed
-- [ ] Tests added/updated and passing; evals run where relevant
-- [ ] `reviewer` subagent run (checks acceptance criteria, tests, and that the doc matches the code)
+## Acceptance
+- [ ] Explainer committed at `docs/curriculum/<NN>-<slug>.md` following `docs/templates/curriculum-module-template.md`
+- [ ] Includes a Mermaid diagram and a worked example
+- [ ] `reviewer` confirms it is accurate against the architecture/data references
+- [ ] A reader can explain the component end to end **without seeing code**

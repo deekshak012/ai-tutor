@@ -1,21 +1,18 @@
 # ai-tutor backlog draft
 
-Status: **DRAFT for Deeksha's review.** v0.0 + v0.1 issues created in GitHub (#1–#20) and added to Project #1; later releases not yet created. Owner assignments, sizes, and priorities are my proposal; adjust freely. Each created feature below is marked with its issue number.
+Status: **Read-to-understand mode.** This project builds nothing — each item is an explainer doc to read, not code to write. The former v0.0 + v0.1 features are now **curriculum modules M01–M20** (GitHub issues #1–#20, all `owner:agent`); see the ordered syllabus in [`docs/curriculum/README.md`](../curriculum/README.md). The later releases below (v0.2 → v2.x) remain a **topic reservoir**: they become further modules when Deeksha asks to add them. Every item is `owner:agent` now (Claude authors the explainer; Deeksha reads) — the `owner:deeksha`/build split below is legacy and no longer applies.
 
-ID prefixes follow `.claude/skills/backlog-writer/SKILL.md`. Owner rule applied: `owner:deeksha` for the core-AI learning pieces (agent loops — Tutor/Course Planner/Researcher; retrieval & grounding; knowledge store design; learner model & knowledge tracing; evals & judge calibration; core voice pipeline); `owner:agent` for scaffolding, boilerplate, frontend wiring, infrastructure, and tests. Workflows (Lesson Builder, Reviewer, Assessor) default to `owner:agent` except the sub-parts that embody grounding, judge calibration, or the learner model, which go to Deeksha.
+ID prefixes follow `.claude/skills/backlog-writer/SKILL.md`. (The owner reasons written per-feature below are legacy from the build-era plan and are retained only as a hint of which topics are deep dives vs light explainers.)
 
-## Definition of Done (applies to every story)
+## Definition of Done (every module)
 
-Every feature below — regardless of owner — ships with these in the same PR. They are **not** repeated in each story's acceptance criteria; they are standing requirements the backlog-writer skill attaches to every issue:
+Each module ships one thing: its **explainer doc**, authored by `doc-writer` (`owner:agent`) at `docs/curriculum/NN-slug.md`, following `docs/templates/curriculum-module-template.md`:
 
-- **A learning doc** by `doc-writer` at `docs/features/<ID>-<slug>.md` so Deeksha can understand what's going on: what & why, how it works (with file/function refs), a Mermaid data-flow diagram, data stored, concepts used (linked to concept explainers), design decisions + rejected alternatives, how to run & test, and a **"check your understanding"** section.
-- `docs/data/guide.md` / `docs/architecture/overview.md` updated when data or architecture changes.
-- Tests added/updated and passing; evals run where relevant.
-- `reviewer` subagent run, confirming the doc matches the actual code.
+- **What it is & why it exists**, **how it works step by step** (with a Mermaid diagram), **where the data lives**, **key concepts** (linked to `docs/concepts/`), **design decisions & rejected alternatives** (linked ADRs), **a worked example**, and a **"check your understanding"** section.
+- `reviewer` checks the explainer for accuracy against the architecture/data references (no code, no tests, no PRs).
+- Acceptance = a reader can explain the component end to end **without seeing code**.
 
-Enforced by: CLAUDE.md ("every feature ships with docs — no exceptions"), the CI docs-check, the PR template, and the feature issue template's Definition-of-Done block.
-
-**Per release (not per story):** when a version's stories are all merged, `doc-writer` writes a per-version overview at `docs/releases/<version>.md` — a higher-altitude "what this release adds and how the pieces connect" companion to the individual feature docs, with an end-to-end walkthrough and a release-level "check your understanding".
+Enforced by: CLAUDE.md read-to-understand rules, the feature issue template's Definition-of-Done block, and the `backlog-writer` skill.
 
 ## Summary
 

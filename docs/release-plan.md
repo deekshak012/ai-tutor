@@ -1,5 +1,7 @@
 # Release Plan
 
+> **Note (read-to-understand mode):** this project no longer builds the releases below — they're kept as the **topic map** for the curriculum. The "releases" group topics into reading parts; the actual deliverables are explainer docs in `docs/curriculum/` (see its README for the module syllabus). v0.0 + v0.1 are already modules M01–M20.
+
 Evals and tracing run through every release.
 
 - **v0.0 Foundations** — repo, gateway, tracing, eval runner, three test courses with hand-written expected topics and fact checks.

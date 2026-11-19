@@ -1,10 +1,10 @@
 ---
 name: backlog-writer
-description: Turns an idea or feature description into a GitHub issue for the ai-tutor repo using the feature issue template, with ID, acceptance criteria, labels, milestone, and GitHub Project fields. Use when the user wants to turn a decision or idea discussed in chat into a tracked issue.
+description: Turns a curriculum topic into a GitHub issue for the ai-tutor repo (read-to-understand mode) — one explainer-doc module per issue, all owner:agent, using the module issue template and GitHub Project fields. Use when the user wants to add a module to the curriculum.
 allowed-tools: Bash, Read, Grep, Glob
 ---
 
-Turn the idea or feature description just discussed into a GitHub issue for `deekshak012/ai-tutor`.
+Turn the topic just discussed into a **curriculum module** issue for `deekshak012/ai-tutor`. This is a read-to-understand project: each issue's deliverable is an explainer doc at `docs/curriculum/NN-slug.md` authored by `doc-writer` — **no code is built, and every module is `owner:agent`.**
 
 ## Epic → ID prefix mapping
 
@@ -29,23 +29,20 @@ Turn the idea or feature description just discussed into a GitHub issue for `dee
 
 ## Steps
 
-1. Identify the epic for the idea and its ID prefix from the table above.
-2. Check for duplicates and find the next free number for that prefix: `gh issue list --repo deekshak012/ai-tutor --search "<keywords>" --state all` and scan titles for the prefix (e.g. `RET-01`, `RET-02`, ...).
-3. Draft the issue with every field:
-   - **ID**: `<prefix>-<NN>`, e.g. `RET-02`
-   - **Description**
-   - **Testable acceptance criteria** (checklist)
-   - **Dependencies** (other issue IDs, or none)
+1. Identify the epic (topic area) for the module and its ID prefix from the table above.
+2. Check for duplicates and find the next module number: `gh issue list --repo deekshak012/ai-tutor --search "<keywords>" --state all` and scan titles for the component ID and the next free `M<NN>` (modules are numbered in reading order; see `docs/curriculum/README.md`).
+3. Draft the issue with every field, following `.github/ISSUE_TEMPLATE/feature.md`:
+   - **Module** `M<NN>` and its **Part**, and the **Component** `<prefix>-<NN>` (e.g. `RET-02`)
+   - **What you'll understand** (what the reader can explain afterward)
+   - **The explainer must cover** (the standing checklist from the template)
+   - **Depth**: deep dive (conceptually rich — agent loops, retrieval/grounding, knowledge store, lesson builder, evals, learner model, voice) or light (UI/plumbing)
    - **Epic label** (from the table)
-   - **Release milestone** (one of v0.0, v0.1, v0.2, v0.3, v0.4, v0.5, v1.0, v1.5, v2.x — from `docs/release-plan.md`)
-   - **Owner label**: `owner:deeksha` or `owner:agent`, with a one-line reason (learning-mode items from CLAUDE.md — agent loops, retrieval, knowledge store, learner model, evals, voice pipeline — default to `owner:deeksha`; scaffolding/infra/tests/frontend wiring default to `owner:agent`)
-   - **Concepts learned**
-   - **Required eval**
-   - **Size**: S, M, or L
-   - **Definition of Done**: always include the standing Definition-of-Done checklist from `.github/ISSUE_TEMPLATE/feature.md` verbatim. Every story ships a `doc-writer` learning doc at `docs/features/<ID>-<slug>.md` (with a "check your understanding" section) so Deeksha understands what was built — this is non-negotiable and appears on every issue.
+   - **Milestone** (the topic's release grouping, from `docs/release-plan.md`) — used only as a grouping
+   - **Reading order**: prereq modules and next module
+   - **Deliverable**: `docs/curriculum/<NN>-<slug>.md`, authored by `doc-writer`
 4. Show the full draft to the user and **wait for explicit approval**. Never create anything before approval.
-5. Once approved, create the issue using `.github/ISSUE_TEMPLATE/feature.md` as the body structure:
-   `gh issue create --repo deekshak012/ai-tutor --title "<ID> <short title>" --body "<filled template>" --label "type:feature" --label "<epic label>" --label "<owner label>" --milestone "<release>"`
-6. Add the created issue to the `ai-tutor` GitHub Project and set its fields (Epic, Release, Owner, Priority, Size, Status = Backlog):
+5. Once approved, create the issue (always `owner:agent` — there is no `owner:deeksha`):
+   `gh issue create --repo deekshak012/ai-tutor --title "M<NN> — How <component> works (<ID>)" --body "<filled template>" --label "type:feature" --label "<epic label>" --label "owner:agent" --milestone "<release>"`
+6. Add the created issue to the `ai-tutor` GitHub Project and set its fields (Epic, Release, Owner = agent, Size, Status = Backlog):
    `gh project item-add <project-number> --owner deekshak012 --url <issue-url>`, then `gh project item-edit` for each field.
 7. Report the issue URL back to the user.

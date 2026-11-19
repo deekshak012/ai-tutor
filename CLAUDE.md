@@ -2,6 +2,8 @@
 
 A generic, course-based AI tutor: slides, chat, voice, exercises, and homework feedback, adapting to how the learner performs. Full product spec: [docs/product-spec.md](docs/product-spec.md). Release plan: [docs/release-plan.md](docs/release-plan.md). Architecture: [docs/architecture/overview.md](docs/architecture/overview.md).
 
+> **Project mode: read-to-understand (no code is built).** This is a learning project for Deeksha to understand *how* a system like this works by reading detailed explainer docs — not to build it. Claude (`doc-writer`, always `owner:agent`) authors the explainers in `docs/curriculum/`; Deeksha reads them and answers the check-your-understanding questions. There is no application code, no `backend/`/`frontend/`, no branches or PRs for code, and no `owner:deeksha`. The tech stack and architecture below are the *subject matter* the explainers describe, not something being implemented here. Start at the syllabus: [docs/curriculum/README.md](docs/curriculum/README.md).
+
 ## Architecture principles
 
 - Use agents only where the next step can't be known in advance. Everything else is a fixed workflow or plain code.
@@ -12,6 +14,8 @@ A generic, course-based AI tutor: slides, chat, voice, exercises, and homework f
 - Every workflow has a defined input and output so it can be evaluated on its own.
 
 ## Tech stack
+
+The stack the system is *designed around* — i.e. what the curriculum explainers describe. Nothing here is installed or built in this project.
 
 - Backend: Python, FastAPI
 - Database: Postgres + pgvector
@@ -27,17 +31,18 @@ A generic, course-based AI tutor: slides, chat, voice, exercises, and homework f
 docs/
   product-spec.md, release-plan.md
   architecture/overview.md
-  data/guide.md            every table and field, filled in as features land
-  features/                one doc per shipped feature
-  releases/                one overview per version, written when the version closes
-  concepts/                standalone concept explainers
+  data/guide.md            reference: tables/fields of the system being explained
+  features/                (legacy) per-feature docs — superseded by curriculum/ in read-to-understand mode
+  releases/                (legacy) per-version overviews — superseded by curriculum parts
+  curriculum/              the read-to-understand syllabus: README.md + one explainer per module
+  concepts/                standalone concept explainers, linked from curriculum modules
   decisions/                ADRs
-  backlog/                 written by the backlog-planner session, not here
-  templates/                feature doc, concept doc, decision record, release overview templates
+  backlog/                 the curriculum backlog draft (module list)
+  templates/                doc + concept + decision + release templates; curriculum-module template
 learning-log.md            personal notes, mine to edit, not touched by Claude after creation
 .claude/
-  skills/                   backlog-writer, explain
-  agents/                   reviewer, doc-writer
+  skills/                   backlog-writer (writes module issues), explain
+  agents/                   reviewer, doc-writer (authors the explainers)
   settings.json             hooks
 .github/
   ISSUE_TEMPLATE/feature.md
@@ -45,39 +50,35 @@ learning-log.md            personal notes, mine to edit, not touched by Claude a
   workflows/ci.yml
 ```
 
-`backend/` and `frontend/` don't exist yet — they're scaffolded as v0.0 backlog work, not part of this setup.
+There is no `backend/` or `frontend/` — no application code is written in this project.
 
 ## Coding conventions
 
-- Python: ruff for lint and format, enforced by a post-edit hook (see Hooks below). Type hints throughout.
-- All model calls go through the one internal gateway module — never call provider SDKs directly from agent or workflow code.
-- Every agent/workflow has a documented input and output contract.
-- Follow existing patterns in the repo; don't introduce a new library or abstraction for something one file already does.
+No application code is written here, so these are dormant. If an explainer includes a short illustrative Python snippet, keep it readable and idiomatic; otherwise these don't apply.
 
-## Learning-mode rules
+## Read-to-understand rules
 
-This project exists for Deeksha to learn how to build these systems end to end, not to have them built for her.
+This project exists for Deeksha to **understand how a course-based AI tutor works by reading**, not to build one.
 
-- Deeksha writes the core AI pieces herself, with Claude as a pair programmer who explains and reviews, not a replacement author, for: the agent loops (Tutor, Course Planner, Researcher), retrieval and grounding, knowledge store design, the learner model and knowledge tracing, evals and judge calibration, and the core voice pipeline.
-- Claude may build scaffolding, boilerplate, frontend wiring, infrastructure, and tests.
-- For every feature, Deeksha must come away understanding what was built, how data is stored, and every concept used. This is why the `doc-writer` subagent exists and why every feature ships with docs.
+- Deeksha does not write code. Claude (`doc-writer`, `owner:agent`) authors a detailed explainer doc for each curriculum module; Deeksha reads it and answers the check-your-understanding questions.
+- Every module explainer must make Deeksha come away understanding what the component is, how it works, how data flows, where data is stored, and every concept involved — with a Mermaid diagram and a worked example.
+- The conceptually rich components (model gateway, agent loops, research, grounding, knowledge store, lesson builder, evals, voice, learner model) get deep dives; pure UI/plumbing gets shorter explainers.
+- `owner:deeksha` no longer exists; there are no build tasks, branches, or code PRs.
 
 ## Workflow
 
-1. Plan in chat.
-2. `backlog-writer` skill turns decisions into GitHub issues.
-3. Pick an issue. Implement on a branch named `feature/<ID>-<short-name>` (e.g. `feature/RET-02-hybrid-search`), or pair with Deeksha directly on `owner:deeksha` issues.
-4. `doc-writer` subagent documents the change in the same PR.
-5. `reviewer` subagent checks the code and docs. Hooks and CI run lint, tests, docs-check, and evals.
-6. Deeksha reviews and merges. Merging closes the issue.
+1. Plan the curriculum in chat.
+2. `backlog-writer` skill turns modules into GitHub issues (one per module, `owner:agent`, explainer-doc deliverable).
+3. Pick a module issue. `doc-writer` authors the explainer at `docs/curriculum/NN-slug.md`.
+4. `reviewer` checks the explainer for accuracy and that it matches the architecture/data references.
+5. Deeksha reads it, answers the check-your-understanding questions, and closes the issue.
 
-Every feature ships with docs in the same PR — no exceptions.
+Every module ships its explainer doc — that *is* the deliverable.
 
 ## Hooks
 
-- `PostToolUse` on `Edit`/`Write`, filtered to `*.py` files via the hook's `if` field: runs `ruff format` then `ruff check` on the touched file. Configured in `.claude/settings.json`. Non-blocking (`onFailure: continue`) — it won't stop an edit, and no test suites run on every edit.
-- Add the frontend equivalent (eslint/prettier or biome) once the frontend exists.
+- The `PostToolUse` ruff hook in `.claude/settings.json` is dormant (no `*.py` files are edited in this project). Harmless if left in place.
 
 ## Worktrees
 
-Not set up yet. Introduce once there are independent issues to run in parallel, with a setup script handling per-worktree env vars, ports, and databases.
+Not applicable in read-to-understand mode (no parallel build work).
