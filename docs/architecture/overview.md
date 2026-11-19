@@ -78,3 +78,26 @@ flowchart TB
 ```
 
 All agents and workflows read and write the shared database; none pass conversation state directly to one another. All model calls route through the gateway, regardless of which agent or workflow is calling.
+
+## Runtime / local stack
+
+The backend runs as one FastAPI service (`backend/app`) talking to one Postgres 16 database with the pgvector extension. Agents, workflows, and services above will be modules inside this backend and will share state through this database. Locally, both run under Docker Compose. See [PLAT-01](../features/PLAT-01-backend-skeleton.md).
+
+```mermaid
+flowchart LR
+    Dev((Developer / tests)) -- "HTTP :8000" --> API
+    Dev -- "psql / pytest :5432" --> PG
+
+    subgraph Compose["docker compose"]
+        API["api<br/>python:3.12-slim<br/>alembic upgrade head, then uvicorn app.main:app"]
+        PG[("db<br/>pgvector/pgvector:pg16<br/>volume: pgdata")]
+    end
+
+    API -- "SQLAlchemy + psycopg 3<br/>DATABASE_URL=...@db:5432" --> PG
+    PG -. "pg_isready healthy gates api start" .-> API
+```
+
+- Configuration comes from environment variables (`DATABASE_URL`, `ENVIRONMENT`) read by `app/config.py`.
+- Schema changes go through Alembic migrations. For local dev they run when the API container starts. PLAT-04 will move them to a deploy step.
+- `/health` is a liveness probe only. It doesn't check the database.
+- CI runs the same `pgvector/pgvector:pg16` image as a service container, so the migration tests run against real Postgres.

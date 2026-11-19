@@ -10,10 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
       - name: Run ruff
         run: |
           if [ -f backend/pyproject.toml ]; then
-            pip install ruff
+            pip install -e "backend[dev]"
             ruff check backend
             ruff format --check backend
           else
@@ -22,13 +25,30 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    services:
+      db:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: ai_tutor
+          POSTGRES_PASSWORD: ai_tutor
+          POSTGRES_DB: ai_tutor
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ai_tutor -d ai_tutor"
+          --health-interval 2s --health-timeout 3s --health-retries 15
+    env:
+      DATABASE_URL: postgresql+psycopg://ai_tutor:ai_tutor@localhost:5432/ai_tutor
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
       - name: Run pytest
         run: |
           if [ -f backend/pyproject.toml ]; then
             pip install -e "backend[dev]"
-            pytest backend
+            cd backend && pytest
           else
             echo "No backend yet — skipping tests."
           fi
