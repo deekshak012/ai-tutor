@@ -1,7 +1,7 @@
 # Feature: Backend skeleton + Postgres/pgvector + Docker
 
 - Issue: #1 (PLAT-01)
-- PR: #TBD
+- PR: [#21](https://github.com/deekshak012/ai-tutor/pull/21)
 - Status: in progress
 
 ## What was built and why
