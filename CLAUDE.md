@@ -29,10 +29,11 @@ docs/
   architecture/overview.md
   data/guide.md            every table and field, filled in as features land
   features/                one doc per shipped feature
+  releases/                one overview per version, written when the version closes
   concepts/                standalone concept explainers
   decisions/                ADRs
   backlog/                 written by the backlog-planner session, not here
-  templates/                feature doc, concept doc, decision record templates
+  templates/                feature doc, concept doc, decision record, release overview templates
 learning-log.md            personal notes, mine to edit, not touched by Claude after creation
 .claude/
   skills/                   backlog-writer, explain

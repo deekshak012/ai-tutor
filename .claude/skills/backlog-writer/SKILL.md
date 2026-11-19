@@ -42,6 +42,7 @@ Turn the idea or feature description just discussed into a GitHub issue for `dee
    - **Concepts learned**
    - **Required eval**
    - **Size**: S, M, or L
+   - **Definition of Done**: always include the standing Definition-of-Done checklist from `.github/ISSUE_TEMPLATE/feature.md` verbatim. Every story ships a `doc-writer` learning doc at `docs/features/<ID>-<slug>.md` (with a "check your understanding" section) so Deeksha understands what was built — this is non-negotiable and appears on every issue.
 4. Show the full draft to the user and **wait for explicit approval**. Never create anything before approval.
 5. Once approved, create the issue using `.github/ISSUE_TEMPLATE/feature.md` as the body structure:
    `gh issue create --repo deekshak012/ai-tutor --title "<ID> <short title>" --body "<filled template>" --label "type:feature" --label "<epic label>" --label "<owner label>" --milestone "<release>"`

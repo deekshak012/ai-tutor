@@ -1,0 +1,1 @@
+One overview per version (`v0.0.md`, `v0.1.md`, …), written by the `doc-writer` subagent when a version's stories are all merged and the milestone closes. Each stitches that release's per-story feature docs into a single "what this version adds and how the pieces connect" picture. Start from `docs/templates/release-overview-template.md`.
